@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.company import Company
 from sqlalchemy.future import select
+from app.models.company import Company
 
 
 class CompanyService:

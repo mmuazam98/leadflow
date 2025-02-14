@@ -1,15 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from enum import Enum
 from typing import List, Optional
-
-
-class Stage(str, Enum):
-    PROSPECT = "PROSPECT"
-    ENGAGED = "ENGAGED"
-    NEGOTIATION = "NEGOTIATION"
-    COMMITTED = "COMMITTED"
-    CLOSED = "CLOSED"
+from app.models.lead import Stage
 
 
 class LeadBase(BaseModel):

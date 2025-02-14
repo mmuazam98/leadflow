@@ -11,7 +11,7 @@ app = FastAPI(title="LeadFlow backend server!")
 @app.on_event("startup")
 async def startup_event():
     """Run when the app starts"""
-    async for session in db.get_session():  # Correct way to use async generator
+    async for session in db.get_session():
         await insert_fake_companies(session)
         await insert_fake_leads(session)
         break
