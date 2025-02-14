@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #6a1be0;
+  --font-fraunces: "Fraunces", serif;
+}
+
+* {
+  font-family: "Inter", serif;
+}
+
+.rs-pagination-btn-active {
+  background: var(--color-primary) !important;
+  color: white !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.rs-picker-date .rs-input-group-inside {
+  --rs-input-bg: #f9fafb;
+}
+.rs-picker-date .rs-input-group-inside input {
+  padding: 12px !important;
+}
+.rs-toggle-checked {
+  --rs-toggle-checked-bg: #6a1be0;
+  --rs-toggle-checked-hover-bg: #6a1be0;
+}
+.rs-dropdown-menu {
+  min-width: 100px;
+}
+
+@keyframes loader {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
