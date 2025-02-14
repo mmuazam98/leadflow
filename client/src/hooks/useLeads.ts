@@ -7,38 +7,37 @@ import {
   fetchLeads,
   updateLeadById,
 } from "@/services/api/leads";
+import {
+  setCurrentPage,
+  setDebouncedSearchText,
+  setLeadToEdit,
+  setOnConfirmAction,
+  setOrder,
+  setSelectedLeads,
+  setSortBy,
+  toggleLeadDrawer,
+  toggleModal,
+} from "@/store/app";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { ILead } from "@/types/lead";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import moment from "moment";
-import { useState } from "react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
 export default function useLeads() {
-  const [searchText, setSearchText] = useState("");
-  const [debouncedSearchText, setDebouncedSearchText] = useState("");
-  const [sortBy, setSortBy] = useState("");
-  const [order, setOrder] = useState("");
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-
-  const [leadToEdit, setLeadToEdit] = useState<ILead | null>(null);
-
-  const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
-  const [isLeadDrawerOpen, setIsLeadDrawerOpen] = useState(false);
-  const [isFilterAndSortOpen, setIsFilterAndSortOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
+  const { currentPage, debouncedSearchText, itemsPerPage, order, searchText, selectedLeads, sortBy } = useAppSelector(
+    (state) => state.app
+  );
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearchText(searchText);
+      dispatch(setDebouncedSearchText(searchText));
     }, 500);
 
     return () => clearTimeout(handler);
-  }, [searchText]);
+  }, [searchText, dispatch]);
 
   const {
     data,
@@ -48,8 +47,6 @@ export default function useLeads() {
     queryKey: ["leads", currentPage, itemsPerPage, sortBy, order, debouncedSearchText],
     queryFn: async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulate delay
-
         const { data } = await fetchLeads({
           limit: itemsPerPage,
           offset: (currentPage - 1) * itemsPerPage,
@@ -57,7 +54,7 @@ export default function useLeads() {
           order,
           query: debouncedSearchText,
         });
-        if (debouncedSearchText.length) setCurrentPage(1);
+        if (debouncedSearchText.length) dispatch(setCurrentPage(1));
         return data;
       } catch (error) {
         console.error("Error loading leads:", error);
@@ -98,7 +95,7 @@ export default function useLeads() {
 
       try {
         await bulkDeleteLeads(selectedLeads);
-        setSelectedLeads([]);
+        dispatch(setSelectedLeads([]));
         toast.success("Bulk deletion successfully!", { id: toastId, description: "" });
       } catch (error) {
         console.error("Error deleting lead:", error);
@@ -122,8 +119,8 @@ export default function useLeads() {
       try {
         const { data } = await createNewLead(lead);
         toast.success("Lead created successfully!", { id: toastId, description: "" });
-        setIsLeadDrawerOpen(false);
-        setLeadToEdit(null);
+        dispatch(toggleLeadDrawer());
+        dispatch(setLeadToEdit(null));
         return data.data;
       } catch (error) {
         console.error("Error creating lead:", error);
@@ -151,8 +148,8 @@ export default function useLeads() {
       try {
         const { data } = await updateLeadById(lead);
         toast.success("Lead updated successfully!", { id: toastId, description: "" });
-        setIsLeadDrawerOpen(false);
-        setLeadToEdit(null);
+        dispatch(toggleLeadDrawer());
+        dispatch(setLeadToEdit(null));
         return data.data;
       } catch (error) {
         console.error("Error updating lead:", error);
@@ -198,27 +195,25 @@ export default function useLeads() {
   };
 
   const onClear = () => {
-    setSortBy("");
-    setOrder("");
+    dispatch(setSortBy(""));
+    dispatch(setOrder(""));
   };
 
   const handleSelection = (leadIds: number[]) => {
-    setSelectedLeads((prev) => {
-      const isRemoving = leadIds.every((id) => prev.includes(id));
-
-      return isRemoving ? prev.filter((id) => !leadIds.includes(id)) : [...new Set([...prev, ...leadIds])];
-    });
+    dispatch(setSelectedLeads(leadIds));
   };
 
   const handleDelete = (bulk: boolean = false, id?: number) => {
-    setOnConfirmAction(() => () => {
-      if (bulk) {
-        bulkDeleteLeadMutation();
-      } else if (id !== undefined) {
-        deleteLeadMutation(id);
-      }
-    });
-    setIsModalOpen(true);
+    dispatch(
+      setOnConfirmAction(() => () => {
+        if (bulk) {
+          bulkDeleteLeadMutation();
+        } else if (id !== undefined) {
+          deleteLeadMutation(id);
+        }
+      })
+    );
+    dispatch(toggleModal());
   };
 
   const onSave = async (lead: ILead) => {
@@ -234,30 +229,17 @@ export default function useLeads() {
   };
 
   const onEdit = (lead: ILead) => {
-    setLeadToEdit(lead);
-    setIsLeadDrawerOpen(true);
+    dispatch(setLeadToEdit(lead));
+    dispatch(toggleLeadDrawer());
   };
 
   return {
     data,
     error,
     isLeadsLoading,
-    currentPage,
-    itemsPerPage,
-    sortBy,
-    order,
     searchText,
     selectedLeads,
-    isLeadDrawerOpen,
-    isFilterAndSortOpen,
-    leadToEdit,
-    isModalOpen,
     handleSelection,
-    setCurrentPage,
-    setSortBy,
-    setItemsPerPage,
-    setSearchText,
-    setOrder,
     deleteLeadMutation,
     createLeadMutation,
     updateLeadMutation,
@@ -265,12 +247,6 @@ export default function useLeads() {
     onClear,
     exportAll,
     onEdit,
-    setIsLeadDrawerOpen,
-    setIsFilterAndSortOpen,
-    setLeadToEdit,
-    setIsModalOpen,
-    onConfirmAction,
-    setOnConfirmAction,
     handleDelete,
     onSave,
   };

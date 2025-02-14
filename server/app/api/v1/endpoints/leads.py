@@ -229,18 +229,19 @@ router.add_api_route(
 )
 
 router.add_api_route(
+    "/export",
+    leads_api.export_leads_data,
+    methods=["GET"],
+    response_model=Response,
+)
+
+router.add_api_route(
     "/{id}",
     leads_api.get_lead_by_id,
     methods=["GET"],
     response_model=Response[LeadResponse],
 )
 
-router.add_api_route(
-    "/export",
-    leads_api.export_leads_data,
-    methods=["GET"],
-    response_model=Response,
-)
 router.add_api_route(
     "/", leads_api.create_lead, methods=["POST"], response_model=Response[LeadResponse]
 )

@@ -1,4 +1,3 @@
-import { IOverlayProps } from "@/types/overlay";
 import { Check, ChevronDown, Mail, Save, User, X } from "lucide-react";
 import { memo, useEffect, useRef, useState } from "react";
 import Drawer from "rsuite/Drawer";
@@ -10,10 +9,10 @@ import { ILead, STAGE } from "@/types/lead";
 import { MOCK_COMPANIES } from "@/services/utils/mockData";
 import useCompanies from "@/hooks/useCompanies";
 import { ICompany } from "@/types/company";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { toggleLeadDrawer } from "@/store/app";
 
-interface IProps extends IOverlayProps {
-  isEditFlow: boolean;
-  leadToEdit: ILead | null;
+interface IProps {
   onSave: (lead: ILead) => Promise<void>;
 }
 
@@ -27,8 +26,11 @@ const emptyLead = {
   engaged: false,
 };
 
-const AddOrEditLeadDrawer: React.FC<IProps> = ({ isOpen, isEditFlow, leadToEdit, close, onSave }) => {
+const AddOrEditLeadDrawer: React.FC<IProps> = ({ onSave }) => {
+  const { isLeadDrawerOpen: isOpen, leadToEdit } = useAppSelector((state) => state.app);
   const { data: companies } = useCompanies();
+
+  const dispatch = useAppDispatch();
 
   const [lead, setLead] = useState<ILead>(emptyLead);
   const [filteredCompanies, setFilteredCompanies] = useState<ICompany[]>([]);
@@ -59,9 +61,9 @@ const AddOrEditLeadDrawer: React.FC<IProps> = ({ isOpen, isEditFlow, leadToEdit,
   }, []);
 
   return (
-    <Drawer open={isOpen} onClose={close} size="min(500px,100%)">
+    <Drawer open={isOpen} onClose={() => dispatch(toggleLeadDrawer())} size="min(500px,100%)">
       <Drawer.Header>
-        <Drawer.Title>{isEditFlow ? "Edit Lead" : "Add a New Lead"}</Drawer.Title>
+        <Drawer.Title>{leadToEdit ? "Edit Lead" : "Add a New Lead"}</Drawer.Title>
         <Drawer.Actions>
           <button
             onClick={() => onSave(lead)}

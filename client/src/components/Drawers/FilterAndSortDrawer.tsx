@@ -1,14 +1,11 @@
-import { IOverlayProps } from "@/types/overlay";
 import { X } from "lucide-react";
 import { memo } from "react";
 import { Drawer } from "rsuite";
 import DropdownList from "../Dropdown";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setOrder, setSortBy, toggleFilterAndSort } from "@/store/app";
 
-interface IProps extends IOverlayProps {
-  sortBy: string;
-  order: string;
-  setSortBy: (value: string) => void;
-  setOrder: (value: string) => void;
+interface IProps {
   onClear: () => void;
 }
 
@@ -25,9 +22,15 @@ const ORDER_BY_MAP: Record<string, string> = {
   desc: "Descending",
 };
 
-const FilterAndSortDrawer: React.FC<IProps> = ({ isOpen, order, sortBy, setOrder, setSortBy, onClear, close }) => {
+const FilterAndSortDrawer: React.FC<IProps> = ({ onClear }) => {
+  const { isFilterAndSortOpen: isOpen, sortBy, order } = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
+
+  const setSort = (val: string) => dispatch(setSortBy(val));
+  const setSortOrder = (val: "asc" | "desc") => dispatch(setOrder(val));
+
   return (
-    <Drawer open={isOpen} onClose={close} size="min(500px,100%)">
+    <Drawer open={isOpen} onClose={() => dispatch(toggleFilterAndSort())} size="min(500px,100%)">
       <Drawer.Header>
         <Drawer.Title>Filter & Sort</Drawer.Title>
         <Drawer.Actions>
@@ -53,19 +56,19 @@ const FilterAndSortDrawer: React.FC<IProps> = ({ isOpen, order, sortBy, setOrder
               items={[
                 {
                   label: "Name",
-                  onClick: () => setSortBy("name"),
+                  onClick: () => setSort("name"),
                 },
                 {
                   label: "Company",
-                  onClick: () => setSortBy("company_name"),
+                  onClick: () => setSort("company_name"),
                 },
                 {
                   label: "Stage",
-                  onClick: () => setSortBy("stage"),
+                  onClick: () => setSort("stage"),
                 },
                 {
                   label: "Engaged",
-                  onClick: () => setSortBy("engaged"),
+                  onClick: () => setSort("engaged"),
                 },
               ]}
             />
@@ -80,11 +83,11 @@ const FilterAndSortDrawer: React.FC<IProps> = ({ isOpen, order, sortBy, setOrder
               items={[
                 {
                   label: "Ascending",
-                  onClick: () => setOrder("asc"),
+                  onClick: () => setSortOrder("asc"),
                 },
                 {
                   label: "Descending",
-                  onClick: () => setOrder("desc"),
+                  onClick: () => setSortOrder("desc"),
                 },
               ]}
             />

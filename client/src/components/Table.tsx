@@ -7,18 +7,16 @@ import { memo } from "react";
 import moment from "moment";
 import InfiniteLoader from "./Loader";
 import TableSkeleton from "./TableSkeleton";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setCurrentPage, setItemsPerPage } from "@/store/app";
 
 interface TableProps {
   isLoading: boolean;
   data: ILead[];
-  currentPage: number;
   totalPages: number;
   totalCount: number;
-  itemsPerPage: number;
   selectedLeads: number[];
   handleSelection: (ids: number[]) => void;
-  onPageChange: (page: number) => void;
-  onItemsPerPageChange: (items: number) => void;
   onEdit: (lead: ILead) => void;
   handleDelete: (bulk?: boolean, id?: number) => void;
 }
@@ -26,16 +24,17 @@ interface TableProps {
 const Table: React.FC<TableProps> = ({
   isLoading,
   data,
-  currentPage,
   totalCount,
-  itemsPerPage,
   selectedLeads,
   handleSelection,
-  onPageChange,
-  onItemsPerPageChange,
   onEdit,
   handleDelete,
 }) => {
+  const { itemsPerPage, currentPage } = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
+  const onItemsPerPageChange = (val: number) => dispatch(setItemsPerPage(val));
+  const onPageChange = (val: number) => dispatch(setCurrentPage(val));
+
   const renderStageIndicator = (stage: StageType) => {
     const stageValue = STAGE_LEVELS[stage];
     return (

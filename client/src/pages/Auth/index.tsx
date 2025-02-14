@@ -2,8 +2,7 @@ import { Mail, Lock, User, ArrowRight, Loader } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 
 const AuthPage: React.FC = () => {
-  const { isLogin, setIsLogin, loading, email, setEmail, password, setPassword, name, setName, handleSubmit } =
-    useAuth();
+  const { isLogin, loading, email, password, name, handleSubmit, handleUpdate, switchLogin } = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#6A1BE0] to-[#9747FF] flex items-center justify-center p-4">
@@ -24,7 +23,7 @@ const AuthPage: React.FC = () => {
                   id="name"
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => handleUpdate("name", e.target.value)}
                   className="pl-10 w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A1BE0] focus:border-transparent"
                   placeholder="John Doe"
                   required={!isLogin}
@@ -43,7 +42,7 @@ const AuthPage: React.FC = () => {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => handleUpdate("email", e.target.value)}
                 className="pl-10 w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A1BE0] focus:border-transparent"
                 placeholder="you@example.com"
                 required
@@ -61,7 +60,7 @@ const AuthPage: React.FC = () => {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => handleUpdate("password", e.target.value)}
                 className="pl-10 w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A1BE0] focus:border-transparent"
                 placeholder="**********"
                 required
@@ -85,7 +84,7 @@ const AuthPage: React.FC = () => {
         </form>
 
         <div className="mt-6 text-center">
-          <button onClick={() => setIsLogin(!isLogin)} className="text-[#6A1BE0] hover:text-[#5516b3] font-medium">
+          <button onClick={switchLogin} className="text-[#6A1BE0] hover:text-[#5516b3] font-medium">
             {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
           </button>
         </div>

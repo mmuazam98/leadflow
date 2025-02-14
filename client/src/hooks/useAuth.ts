@@ -1,23 +1,31 @@
 import { loginUser, registerUser } from "@/services/api/users";
-import { useAppDispatch } from "@/store/hooks";
+import { resetAuthState, setInput, setLoading, setLogin } from "@/store/auth";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setUserAndToken } from "@/store/user";
 import { IAxiosErrorResponseData } from "@/types/api";
 import axios from "axios";
-import { useState } from "react";
 import { toast } from "sonner";
 
 export default function useAuth() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { email, password, name, isLogin, loading } = useAppSelector((state) => state.auth);
 
   const dispatch = useAppDispatch();
 
+  const switchLogin = () => dispatch(setLogin(!isLogin));
+
+  const handleUpdate = (field: "email" | "password" | "name", value: string) => {
+    dispatch(
+      setInput({
+        field,
+        value,
+      })
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    dispatch(setLoading(true));
+
     try {
       if (isLogin) {
         const {
@@ -28,6 +36,7 @@ export default function useAuth() {
         });
 
         dispatch(setUserAndToken(data));
+        dispatch(resetAuthState());
         toast.success("Successfully logged in!", {
           description: "Welcome back to your account.",
         });
@@ -42,6 +51,7 @@ export default function useAuth() {
       });
 
       dispatch(setUserAndToken(data));
+      dispatch(resetAuthState());
       toast.success("Account created successfully!", {
         description: "Welcome to our platform.",
       });
@@ -57,20 +67,18 @@ export default function useAuth() {
         description: errMessage,
       });
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
   return {
     loading,
     isLogin,
-    setIsLogin,
     email,
-    setEmail,
     password,
-    setPassword,
     name,
-    setName,
     handleSubmit,
+    handleUpdate,
+    switchLogin,
   };
 }
