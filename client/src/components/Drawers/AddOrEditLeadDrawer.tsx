@@ -6,7 +6,6 @@ import { Toggle } from "rsuite";
 import DropdownList from "../Dropdown";
 import { STAGES } from "@/services/utils/stages";
 import { ILead, STAGE } from "@/types/lead";
-import { MOCK_COMPANIES } from "@/services/utils/mockData";
 import useCompanies from "@/hooks/useCompanies";
 import { ICompany } from "@/types/company";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -143,7 +142,7 @@ const AddOrEditLeadDrawer: React.FC<IProps> = ({ onSave }) => {
                     });
                     if (value.length) {
                       setFilteredCompanies(
-                        MOCK_COMPANIES.filter((company) => company.name.toLowerCase().includes(value.toLowerCase()))
+                        companies?.filter((company) => company.name.toLowerCase().includes(value.toLowerCase())) ?? []
                       );
                     }
                   }}
