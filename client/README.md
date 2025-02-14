@@ -1,6 +1,6 @@
 # LeadFlow Frontend
 
-This repository contains the frontend application, built using **React**, **TypeScript**, **Tailwind CSS**, and **React Query**.
+This repository contains the frontend application, built using **React**, **TypeScript**, **Tailwind CSS**, and **React Query**. Check out the live demo [here](https://leadflow-alpha.vercel.app/).
 
 ## 🚀 Features
 

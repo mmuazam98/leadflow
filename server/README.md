@@ -1,6 +1,6 @@
 # LeadFlow Backend
 
-This repository contains the backend API, built using FastAPI and SQLAlchemy with support for PostgreSQL.
+This repository contains the backend API, built using FastAPI and SQLAlchemy with support for PostgreSQL. Explore the API documentation [here](https://leadflow-ma8v.onrender.com/docs).
 
 ## 🚀 Features
 

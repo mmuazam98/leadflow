@@ -1,6 +1,10 @@
 # LeadFlow
 
-Full stack application built using React and FastAPI.
+LeadFlow is a full-stack application built with React and FastAPI.
+
+🚀 Live Demo: [Click here](https://leadflow-alpha.vercel.app/)
+
+📖 API Documentation: [View here](https://leadflow-ma8v.onrender.com/docs)
 
 ## 📌 Features
 
