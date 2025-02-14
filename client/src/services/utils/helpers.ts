@@ -1,4 +1,4 @@
-import { IMeta } from "@/types/api";
+import { IMeta } from "../../types/api";
 
 export const getInitials = (name: string) => {
   const names = name.split(" ");
