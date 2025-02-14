@@ -13,7 +13,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <img src="/logo.webp" className="h-10 w-10 object-contain rounded-md" />
+            <img src="/logo.webp" className="h-10 w-10 object-contain rounded-md shadow-lg hover:shadow-xl" />
           </div>
 
           {/* Desktop menu */}

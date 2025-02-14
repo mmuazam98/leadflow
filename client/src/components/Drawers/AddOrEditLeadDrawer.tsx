@@ -178,7 +178,6 @@ const AddOrEditLeadDrawer: React.FC<IProps> = ({ isOpen, isEditFlow, leadToEdit,
                       setLead({
                         ...lead,
                         company_id: null,
-                        // company_name: ,
                       });
                       setCompanyDropdown(false);
                     }}>
