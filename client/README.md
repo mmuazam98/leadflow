@@ -71,3 +71,9 @@ The application will be available at http://localhost:5173.
 ## 🔍 API Integration
 
 The frontend communicates with the LeadFlow backend API hosted at VITE_API_ENDPOINT. Ensure the backend is running before making API calls.
+
+## 🧪 Running Tests
+
+```bash
+yarn test
+```

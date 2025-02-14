@@ -86,3 +86,9 @@ FastAPI provides interactive API docs:
 Swagger UI: http://127.0.0.1:8000/docs
 
 ReDoc: http://127.0.0.1:8000/redoc
+
+## 🧪 Running Tests
+
+```bash
+PYTHONPATH=. pytest
+```
