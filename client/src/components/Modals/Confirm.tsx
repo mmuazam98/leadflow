@@ -4,8 +4,8 @@ import { Trash } from "lucide-react";
 import { memo } from "react";
 import { Modal } from "rsuite";
 
-const ConfirmModal: React.FC = () => {
-  const { isModalOpen: isOpen, selectedLeads, onConfirmAction } = useAppSelector((state) => state.app);
+const ConfirmModal: React.FC<{ onConfirm: () => void }> = ({ onConfirm }) => {
+  const { isModalOpen: isOpen, selectedLeads } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
   const handleClose = () => dispatch(toggleModal());
 
@@ -26,7 +26,7 @@ const ConfirmModal: React.FC = () => {
           Cancel
         </button>
         <button
-          onClick={onConfirmAction}
+          onClick={onConfirm}
           className="transition-all flex items-center justify-center gap-2 outline-none cursor-pointer hover:shadow text-white py-2 px-4 bg-red-500 rounded-lg w-full sm:w-auto">
           <Trash size={18} />
           Delete

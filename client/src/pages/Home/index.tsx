@@ -19,8 +19,9 @@ export default function Home() {
     exportAll,
     onClear,
     onEdit,
-    handleDelete,
     onSave,
+    onConfirmAction,
+    handleDelete,
   } = useLeads();
   const dispatch = useAppDispatch();
 
@@ -28,7 +29,7 @@ export default function Home() {
     <Layout>
       <AddOrEditLeadDrawer onSave={onSave} />
       <FilterAndSortDrawer onClear={onClear} />
-      <ConfirmModal />
+      <ConfirmModal onConfirm={onConfirmAction} />
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 sm:gap-0">
         <div className="max-md:text-3xl text-4xl font-semibold leading-9 sm:leading-10 !font-fraunces">Leads</div>

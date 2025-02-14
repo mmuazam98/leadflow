@@ -13,7 +13,6 @@ export interface IAppState {
   isLeadDrawerOpen: boolean;
   isFilterAndSortOpen: boolean;
   isModalOpen: boolean;
-  onConfirmAction: () => void;
 }
 
 const initialState: IAppState = {
@@ -28,7 +27,6 @@ const initialState: IAppState = {
   isLeadDrawerOpen: false,
   isFilterAndSortOpen: false,
   isModalOpen: false,
-  onConfirmAction: () => {},
 };
 
 const appSlice = createSlice({
@@ -75,9 +73,6 @@ const appSlice = createSlice({
     toggleModal: (state) => {
       state.isModalOpen = !state.isModalOpen;
     },
-    setOnConfirmAction: (state, action: PayloadAction<() => void>) => {
-      state.onConfirmAction = action.payload;
-    },
   },
 });
 
@@ -93,7 +88,6 @@ export const {
   toggleLeadDrawer,
   toggleFilterAndSort,
   toggleModal,
-  setOnConfirmAction,
 } = appSlice.actions;
 
 export default appSlice.reducer;

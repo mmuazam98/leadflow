@@ -11,7 +11,6 @@ import {
   setCurrentPage,
   setDebouncedSearchText,
   setLeadToEdit,
-  setOnConfirmAction,
   setOrder,
   setSelectedLeads,
   setSortBy,
@@ -22,13 +21,15 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { ILead } from "@/types/lead";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import moment from "moment";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function useLeads() {
   const { currentPage, debouncedSearchText, itemsPerPage, order, searchText, selectedLeads, sortBy } = useAppSelector(
     (state) => state.app
   );
+  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -83,6 +84,7 @@ export default function useLeads() {
       queryClient.invalidateQueries({
         queryKey: ["leads"],
       });
+      dispatch(toggleModal());
     },
   });
 
@@ -106,6 +108,7 @@ export default function useLeads() {
       queryClient.invalidateQueries({
         queryKey: ["leads"],
       });
+      dispatch(toggleModal());
     },
   });
 
@@ -199,21 +202,17 @@ export default function useLeads() {
     dispatch(setOrder(""));
   };
 
-  const handleSelection = (leadIds: number[]) => {
-    dispatch(setSelectedLeads(leadIds));
-  };
+  const handleSelection = (leadIds: number[]) => dispatch(setSelectedLeads(leadIds));
 
   const handleDelete = (bulk: boolean = false, id?: number) => {
-    dispatch(
-      setOnConfirmAction(() => () => {
-        if (bulk) {
-          bulkDeleteLeadMutation();
-        } else if (id !== undefined) {
-          deleteLeadMutation(id);
-        }
-      })
-    );
     dispatch(toggleModal());
+    setOnConfirmAction(() => () => {
+      if (bulk) {
+        bulkDeleteLeadMutation();
+      } else if (id !== undefined) {
+        deleteLeadMutation(id);
+      }
+    });
   };
 
   const onSave = async (lead: ILead) => {
@@ -239,6 +238,7 @@ export default function useLeads() {
     isLeadsLoading,
     searchText,
     selectedLeads,
+    onConfirmAction,
     handleSelection,
     deleteLeadMutation,
     createLeadMutation,
@@ -247,7 +247,7 @@ export default function useLeads() {
     onClear,
     exportAll,
     onEdit,
-    handleDelete,
     onSave,
+    handleDelete,
   };
 }

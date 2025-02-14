@@ -7,9 +7,12 @@ const AuthPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#6A1BE0] to-[#9747FF] flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-8">
-        <h2 className="text-3xl font-bold text-center mb-8 text-[#6A1BE0]">
-          {isLogin ? "Welcome Back" : "Create Account"}
-        </h2>
+        <div className="flex flex-col items-center gap-4 justify-center">
+          <img src="/icon.png" className="h-10 w-10 rounded" />
+          <h2 className="text-3xl font-bold text-center mb-8 text-[#6A1BE0]">
+            {isLogin ? "Welcome Back" : "Create Account"}
+          </h2>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {!isLogin && (
