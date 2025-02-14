@@ -128,7 +128,10 @@ export default function Home() {
       </div>
 
       <div className="flex flex-col gap-2 self-stretch">
-        <p className="text-[#646069] text-xs">
+        <p
+          className={`text-[#646069] text-xs ${
+            leadsResponse?.meta?.total_count && leadsResponse?.meta?.total_count > 0 ? "" : "opacity-0"
+          }`}>
           Showing {getStartAndEnd(leadsResponse?.meta)} of {leadsResponse?.meta?.total_count ?? 0} leads.
         </p>
         <Table

@@ -48,6 +48,8 @@ export default function useLeads() {
     queryKey: ["leads", currentPage, itemsPerPage, sortBy, order, debouncedSearchText],
     queryFn: async () => {
       try {
+        await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulate delay
+
         const { data } = await fetchLeads({
           limit: itemsPerPage,
           offset: (currentPage - 1) * itemsPerPage,

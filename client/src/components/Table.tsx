@@ -6,6 +6,7 @@ import { ILead, STAGE_LEVELS, StageType } from "@/types/lead";
 import { memo } from "react";
 import moment from "moment";
 import InfiniteLoader from "./Loader";
+import TableSkeleton from "./TableSkeleton";
 
 interface TableProps {
   isLoading: boolean;
@@ -81,64 +82,68 @@ const Table: React.FC<TableProps> = ({
             </tr>
           </thead>
           <tbody>
-            {data.map((lead) => (
-              <tr key={lead.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="py-3 px-4">
-                  <input
-                    onChange={() => handleSelection([lead.id!])}
-                    type="checkbox"
-                    checked={selectedLeads.includes(lead.id!)}
-                    className="rounded border-gray-300 accent-[#6A1BE0] focus:ring-[#6A1BE0]"
-                  />
-                </td>
-                <td className="py-3 px-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#6A1BE0]/10 flex items-center justify-center">
-                      <span className="text-sm font-medium text-[#6A1BE0]">{getInitials(lead.name)}</span>
+            {data.length > 0 ? (
+              data.map((lead) => (
+                <tr key={lead.id} className="border-b border-gray-200 hover:bg-gray-50">
+                  <td className="py-3 px-4">
+                    <input
+                      onChange={() => handleSelection([lead.id!])}
+                      type="checkbox"
+                      checked={selectedLeads.includes(lead.id!)}
+                      className="rounded border-gray-300 accent-[#6A1BE0] focus:ring-[#6A1BE0]"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#6A1BE0]/10 flex items-center justify-center">
+                        <span className="text-sm font-medium text-[#6A1BE0]">{getInitials(lead.name)}</span>
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-900">{lead.name}</div>
+                        <div className="text-xs sm:text-sm text-gray-500">{lead.email}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-medium text-gray-900">{lead.name}</div>
-                      <div className="text-xs sm:text-sm text-gray-500">{lead.email}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="py-3 px-4 text-sm text-gray-500 whitespace-nowrap">{lead.company_name}</td>
-                <td className="py-3 px-4">{renderStageIndicator(lead.stage)}</td>
-                <td className="py-3 px-4">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
-                      lead.engaged ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                    }`}>
-                    {lead.engaged ? "Engaged" : "Not Engaged"}
-                  </span>
-                </td>
-                <td className="py-3 px-4 text-sm text-gray-500 whitespace-nowrap">
-                  {lead.last_contacted_at ? moment(lead.last_contacted_at).format("DD MMM, YYYY") : "-"}
-                </td>
-                <td className="py-3 px-4">
-                  <DropdownList
-                    placement="leftStart"
-                    customRender
-                    renderToggle={(props, ref) => (
-                      <button {...props} ref={ref} className={"flex items-center gap-2 text-sm cursor-pointer"}>
-                        <MoreVertical className="h-5 w-5" />
-                      </button>
-                    )}
-                    value=""
-                    items={[
-                      {
-                        label: "Edit",
-                        onClick: () => onEdit(lead),
-                      },
-                      {
-                        label: "Delete",
-                        onClick: () => handleDelete(false, lead.id!),
-                      },
-                    ]}
-                  />
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-500 whitespace-nowrap">{lead.company_name}</td>
+                  <td className="py-3 px-4">{renderStageIndicator(lead.stage)}</td>
+                  <td className="py-3 px-4">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
+                        lead.engaged ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                      }`}>
+                      {lead.engaged ? "Engaged" : "Not Engaged"}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-500 whitespace-nowrap">
+                    {lead.last_contacted_at ? moment(lead.last_contacted_at).format("DD MMM, YYYY") : "-"}
+                  </td>
+                  <td className="py-3 px-4">
+                    <DropdownList
+                      placement="leftStart"
+                      customRender
+                      renderToggle={(props, ref) => (
+                        <button {...props} ref={ref} className={"flex items-center gap-2 text-sm cursor-pointer"}>
+                          <MoreVertical className="h-5 w-5" />
+                        </button>
+                      )}
+                      value=""
+                      items={[
+                        {
+                          label: "Edit",
+                          onClick: () => onEdit(lead),
+                        },
+                        {
+                          label: "Delete",
+                          onClick: () => handleDelete(false, lead.id!),
+                        },
+                      ]}
+                    />
+                  </td>
+                </tr>
+              ))
+            ) : isLoading ? (
+              <TableSkeleton rows={itemsPerPage} />
+            ) : null}
           </tbody>
         </table>
       </div>
