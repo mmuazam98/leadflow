@@ -4,6 +4,7 @@ from app.schemas.lead import LeadResponse
 
 
 def generate_csv(leads: list[LeadResponse]) -> str:
+    """Generate a CSV string from a list of LeadResponse objects."""
     output = io.StringIO()
     writer = csv.writer(output)
 

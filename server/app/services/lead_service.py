@@ -1,5 +1,4 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException
 from sqlalchemy import asc, desc
 from sqlalchemy.sql import func, update, or_
 from sqlalchemy.future import select
@@ -43,8 +42,7 @@ class LeadService:
         lead = result.scalars().first()
 
         if not lead:
-            raise HTTPException(
-                status_code=400, detail=f"Lead with the ID:{lead_id} not found")
+            raise None
 
         update_fields = lead_data.dict(exclude_unset=True)
         for key, value in update_fields.items():
@@ -164,3 +162,39 @@ class LeadService:
         )
         await db.commit()
         return True if result.rowcount else False
+
+    async def get_lead_by_id(self, db: AsyncSession, id: int):
+        result = await db.execute(
+            select(
+                Lead.id,
+                Lead.name,
+                Lead.email,
+                Lead.engaged,
+                Lead.stage,
+                Lead.last_contacted_at,
+                Lead.created_at,
+                Lead.updated_at,
+                Company.id.label("company_id"),
+                Company.name.label("company_name")
+            )
+            .join(Company, Lead.company_id == Company.id, isouter=True)
+            .where(Lead.id == id, Lead.deleted_at.is_(None))
+        )
+
+        lead = result.first()
+
+        if not lead:
+            return None
+
+        return LeadResponse(
+            id=lead.id,
+            name=lead.name,
+            email=lead.email,
+            engaged=lead.engaged,
+            stage=lead.stage,
+            last_contacted_at=lead.last_contacted_at,
+            created_at=lead.created_at,
+            updated_at=lead.updated_at,
+            company_id=lead.company_id,
+            company_name=lead.company_name,
+        )

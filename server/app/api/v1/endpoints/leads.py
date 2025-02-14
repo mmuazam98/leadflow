@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Path
+from fastapi import APIRouter, Depends, HTTPException, Query, Path, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from pydantic import ValidationError
 from typing import List
 from datetime import datetime
 from app.schemas.response import Response, ResponseWithMeta
@@ -38,15 +39,18 @@ class LeadsAPI:
             )
             return Response(data=lead)
 
+        except ValidationError as e:
+            log_message("error", f"Validation error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=e.errors())
         except SQLAlchemyError as e:
             log_message("error", f"Database error: {e}")
             raise HTTPException(
-                status_code=500, detail="Internal server error")
-
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
             log_message("error", f"Unexpected error: {e}")
             raise HTTPException(
-                status_code=500,
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Something went wrong!",
             )
 
@@ -66,17 +70,25 @@ class LeadsAPI:
             lead = await self.lead_service.update_lead(
                 db=session, lead_id=id, lead_data=req
             )
+            if not lead:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail=f"Lead with ID {id} not found")
             return Response(data=lead)
 
+        except ValidationError as e:
+            log_message("error", f"Validation error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=e.errors())
+        except HTTPException as e:
+            raise e
         except SQLAlchemyError as e:
             log_message("error", f"Database error: {e}")
             raise HTTPException(
-                status_code=500, detail="Internal server error")
-
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
             log_message("error", f"Unexpected error: {e}")
             raise HTTPException(
-                status_code=500,
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Something went wrong!",
             )
 
@@ -106,11 +118,11 @@ class LeadsAPI:
         except SQLAlchemyError as e:
             log_message("error", f"Database error: {e}")
             raise HTTPException(
-                status_code=500, detail="Internal server error")
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
             log_message("error", f"Unexpected error: {e}")
             raise HTTPException(
-                status_code=500, detail="Something went wrong!")
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 
     async def delete_lead(
             self,
@@ -122,16 +134,18 @@ class LeadsAPI:
             success = await self.lead_service.delete_lead(db=session, id=id)
             if not success:
                 raise HTTPException(
-                    status_code=500, detail="Something went wrong!")
+                    status_code=status.HTTP_404_NOT_FOUND, detail=f"Lead with ID {id} not found")
             return Response(data="Lead deleted successfully!")
+        except HTTPException as e:
+            raise e
         except SQLAlchemyError as e:
             log_message("error", f"Database error: {e}")
             raise HTTPException(
-                status_code=500, detail="Internal server error")
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
             log_message("error", f"Unexpected error: {e}")
             raise HTTPException(
-                status_code=500, detail="Something went wrong!")
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 
     async def bulk_delete(
             self,
@@ -143,16 +157,45 @@ class LeadsAPI:
             success = await self.lead_service.bulk_delete(db=session, ids=req.ids)
             if not success:
                 raise HTTPException(
-                    status_code=500, detail="Something went wrong!")
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
             return Response(data="Leads deleted successfully!")
+
+        except ValidationError as e:
+            log_message("error", f"Validation error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=e.errors())
         except SQLAlchemyError as e:
             log_message("error", f"Database error: {e}")
             raise HTTPException(
-                status_code=500, detail="Internal server error")
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
             log_message("error", f"Unexpected error: {e}")
             raise HTTPException(
-                status_code=500, detail="Something went wrong!")
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
+
+    async def get_lead_by_id(
+            self,
+            id: int = Path(..., title="Lead ID"),
+            session: AsyncSession = Depends(db.get_session),
+            _=Depends(get_current_user),
+    ) -> Response[LeadResponse]:
+        try:
+            lead = await self.lead_service.get_lead_by_id(db=session, id=id)
+            if not lead:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail=f"Lead with ID {id} not found")
+            return Response(data=lead)
+
+        except HTTPException as e:
+            raise e
+        except SQLAlchemyError as e:
+            log_message("error", f"Database error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
+        except Exception as e:
+            log_message("error", f"Unexpected error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 
     async def export_leads_data(
         self,
@@ -173,7 +216,7 @@ class LeadsAPI:
         except Exception as e:
             log_message("error", f"Unexpected error: {e}")
             raise HTTPException(
-                status_code=500, detail="Something went wrong!")
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 
 
 leads_api = LeadsAPI()
@@ -184,6 +227,14 @@ router.add_api_route(
     methods=["GET"],
     response_model=ResponseWithMeta[List[LeadResponse]],
 )
+
+router.add_api_route(
+    "/{id}",
+    leads_api.get_lead_by_id,
+    methods=["GET"],
+    response_model=Response[LeadResponse],
+)
+
 router.add_api_route(
     "/export",
     leads_api.export_leads_data,

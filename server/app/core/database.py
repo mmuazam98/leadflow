@@ -3,7 +3,8 @@ from typing import AsyncGenerator
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 
-DATABASE_URL = settings.ASYNC_DATABASE_URL 
+DATABASE_URL = settings.ASYNC_DATABASE_URL
+
 
 class AsyncDatabaseSession:
     def __init__(self):
@@ -19,9 +20,10 @@ class AsyncDatabaseSession:
         )
 
     async def get_session(self) -> AsyncGenerator[AsyncSession, None]:
-        """ Dependency function to get an async database session. """
+        """Dependency function to get an async database session."""
         async with self._session_factory() as session:
             yield session
+
 
 # Create a global database instance
 db = AsyncDatabaseSession()

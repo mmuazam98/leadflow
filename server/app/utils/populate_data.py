@@ -10,6 +10,7 @@ fake = Faker()
 
 
 async def insert_fake_companies(db: AsyncSession, num_companies: int = 100):
+    """Inserts a specified number of fake companies into the database if no companies are present."""
     # Check if data exists
     result = await db.execute(select(Company.id).limit(1))
     existing_company = result.scalar()
@@ -31,6 +32,7 @@ async def insert_fake_companies(db: AsyncSession, num_companies: int = 100):
 
 
 async def insert_fake_leads(db: AsyncSession, num_leads: int = 500):
+    """Inserts a specified number of fake leads into the database if no leads are present."""
     result = await db.execute(select(Lead.id).limit(1))
     existing_company = result.scalar()
 
