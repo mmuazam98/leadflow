@@ -57,7 +57,7 @@ export const MOCK_DATA: ILead[] = [
     company_id: 1,
     stage: STAGE.ENGAGED,
     engaged: true,
-    last_contacted_at: new Date("05 Mar 2025"),
+    last_contacted_at: new Date("05 Mar 2025").toString(),
   },
   {
     id: 2,
@@ -67,7 +67,7 @@ export const MOCK_DATA: ILead[] = [
     company_id: 2,
     stage: STAGE.COMMITTED,
     engaged: true,
-    last_contacted_at: new Date("05 Mar 2025"),
+    last_contacted_at: new Date("05 Mar 2025").toString(),
   },
   {
     id: 3,
@@ -97,6 +97,6 @@ export const MOCK_DATA: ILead[] = [
     company_id: 5,
     stage: STAGE.CLOSED,
     engaged: true,
-    last_contacted_at: new Date("11 Jan 2025"),
+    last_contacted_at: new Date("11 Jan 2025").toString(),
   },
 ];
