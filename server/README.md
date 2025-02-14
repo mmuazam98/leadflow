@@ -8,7 +8,7 @@ This repository contains the backend API, built using FastAPI and SQLAlchemy wit
 
 - Advanced search and filtering
 
-- Bulk import/export functionality (CSV)
+- Bulk export functionality (CSV)
 
 - Authentication & Authorization
 
