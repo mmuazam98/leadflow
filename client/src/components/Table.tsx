@@ -1,4 +1,4 @@
-import { MoreVertical, Trash } from "lucide-react";
+import { CircleCheck, Clock4, MoreVertical, Trash } from "lucide-react";
 import DropdownList from "./Dropdown";
 import { getInitials } from "@/services/utils/helpers";
 import { Pagination, Tooltip, Whisper } from "rsuite";
@@ -107,9 +107,12 @@ const Table: React.FC<TableProps> = ({
                   <td className="py-3 px-4">{renderStageIndicator(lead.stage)}</td>
                   <td className="py-3 px-4">
                     <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
-                        lead.engaged ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                      className={`inline-flex gap-1 items-center py-0.5 px-1.5 rounded text-xs font-medium whitespace-nowrap border ${
+                        lead.engaged
+                          ? "bg-green-100 text-green-800 border-green-200"
+                          : "bg-gray-100 text-gray-800 border-gray-300"
                       }`}>
+                      {!lead.engaged ? <Clock4 size={10} /> : <CircleCheck size={10} />}
                       {lead.engaged ? "Engaged" : "Not Engaged"}
                     </span>
                   </td>
