@@ -36,10 +36,10 @@ export default function Home() {
 
         <div className="flex flex-col max-sm:flex-col-reverse sm:flex-row gap-3 w-full sm:w-auto">
           <button
-            onClick={() => handleDelete(true)}
+            onClick={() => selectedLeads.length > 0 && handleDelete(true)}
             className={`transition-all ${
-              selectedLeads.length > 0 ? "opacity-100 cursor-pointer" : "opacity-0 max-sm:hidden cursor-not-allowed"
-            } flex items-center justify-center gap-2 outline-none cursor-pointer hover:shadow text-primary py-2 px-4 bg-white border border-primary rounded-lg w-full sm:w-auto`}>
+              selectedLeads.length > 0 ? "opacity-100 cursor-pointer" : "opacity-0 max-sm:hidden"
+            } flex items-center justify-center gap-2 outline-none hover:shadow text-primary py-2 px-4 bg-white border border-primary rounded-lg w-full sm:w-auto`}>
             <Trash size={14} />
             Bulk Delete
           </button>
