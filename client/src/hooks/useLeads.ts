@@ -137,6 +137,7 @@ export default function useLeads() {
       queryClient.invalidateQueries({
         queryKey: ["leads"],
       });
+      queryClient.invalidateQueries({ queryKey: ["companies"] }); // invalidate incase a new company was added
     },
   });
 
