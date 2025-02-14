@@ -1,7 +1,7 @@
 import { MoreVertical, Trash } from "lucide-react";
 import DropdownList from "./Dropdown";
 import { getInitials } from "@/services/utils/helpers";
-import { Pagination } from "rsuite";
+import { Pagination, Tooltip, Whisper } from "rsuite";
 import { ILead, STAGE_LEVELS, StageType } from "@/types/lead";
 import { memo } from "react";
 import moment from "moment";
@@ -38,11 +38,21 @@ const Table: React.FC<TableProps> = ({
   const renderStageIndicator = (stage: StageType) => {
     const stageValue = STAGE_LEVELS[stage];
     return (
-      <div className="flex gap-0.5">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className={`w-1.5 h-5 rounded-sm ${i <= stageValue ? "bg-[#6A1BE0]" : "bg-gray-200"}`} />
-        ))}
-      </div>
+      <Whisper
+        placement="top"
+        controlId="control-id-hover"
+        trigger="hover"
+        speaker={
+          <Tooltip>
+            <span className="capitalize">{stage?.toLowerCase()}</span>
+          </Tooltip>
+        }>
+        <div className="flex gap-0.5">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className={`w-1.5 h-5 rounded-sm ${i <= stageValue ? "bg-[#6A1BE0]" : "bg-gray-200"}`} />
+          ))}
+        </div>
+      </Whisper>
     );
   };
 
@@ -60,11 +70,11 @@ const Table: React.FC<TableProps> = ({
                   className="rounded border-gray-300 accent-[#6A1BE0] focus:ring-[#6A1BE0]"
                 />
               </th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-500">Name</th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-500">Company</th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-500">Stage</th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-500">Engaged</th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-500 whitespace-nowrap">
+              <th className="py-3 px-4 text-left text-xs sm:text-sm font-medium text-gray-500">Name</th>
+              <th className="py-3 px-4 text-left text-xs sm:text-sm font-medium text-gray-500">Company</th>
+              <th className="py-3 px-4 text-left text-xs sm:text-sm font-medium text-gray-500">Stage</th>
+              <th className="py-3 px-4 text-left text-xs sm:text-sm font-medium text-gray-500">Engaged</th>
+              <th className="py-3 px-4 text-left text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
                 Last Contacted
               </th>
               <th className="w-12 py-3 px-4"></th>
@@ -88,7 +98,7 @@ const Table: React.FC<TableProps> = ({
                     </div>
                     <div>
                       <div className="font-medium text-gray-900">{lead.name}</div>
-                      <div className="text-sm text-gray-500">{lead.email}</div>
+                      <div className="text-xs sm:text-sm text-gray-500">{lead.email}</div>
                     </div>
                   </div>
                 </td>
@@ -102,7 +112,7 @@ const Table: React.FC<TableProps> = ({
                     {lead.engaged ? "Engaged" : "Not Engaged"}
                   </span>
                 </td>
-                <td className="py-3 px-4 text-sm text-gray-500">
+                <td className="py-3 px-4 text-sm text-gray-500 whitespace-nowrap">
                   {lead.last_contacted_at ? moment(lead.last_contacted_at).format("DD MMM, YYYY") : "-"}
                 </td>
                 <td className="py-3 px-4">
@@ -110,7 +120,7 @@ const Table: React.FC<TableProps> = ({
                     placement="leftStart"
                     customRender
                     renderToggle={(props, ref) => (
-                      <button {...props} ref={ref} className={"flex items-center gap-2 text-sm"}>
+                      <button {...props} ref={ref} className={"flex items-center gap-2 text-sm cursor-pointer"}>
                         <MoreVertical className="h-5 w-5" />
                       </button>
                     )}
@@ -133,7 +143,7 @@ const Table: React.FC<TableProps> = ({
         </table>
       </div>
 
-      <div className="flex items-center flex-col max-sm:gap-2 sm:flex-row justify-between px-4 py-3 border-t border-gray-200">
+      <div className="flex items-center flex-col max-sm:gap-4 max-sm:items-start sm:flex-row justify-between px-4 py-3 border-t border-gray-200">
         <div className="flex items-center gap-2">
           <DropdownList
             placement="topStart"
@@ -151,19 +161,25 @@ const Table: React.FC<TableProps> = ({
                 label: "50 per page",
                 onClick: () => onItemsPerPageChange(50),
               },
+              {
+                label: "100 per page",
+                onClick: () => onItemsPerPageChange(100),
+              },
             ]}
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 max-sm:w-full max-sm:justify-center">
           <Pagination
             prev
             next
+            last
+            first
             size="sm"
             total={totalCount}
             limit={itemsPerPage}
             ellipsis
-            maxButtons={5}
+            maxButtons={window.innerWidth < 500 ? 2 : 5}
             activePage={currentPage}
             onChangePage={(page) => onPageChange(page)}
           />

@@ -5,9 +5,7 @@ import ConfirmModal from "@/components/Modals/Confirm";
 import Table from "@/components/Table";
 import useLeads from "@/hooks/useLeads";
 import { getStartAndEnd } from "@/services/utils/helpers";
-import { ILead } from "@/types/lead";
 import { CloudDownload, ListFilter, Plus, Search, Trash } from "lucide-react";
-import { useState } from "react";
 
 export default function Home() {
   const {
@@ -19,6 +17,10 @@ export default function Home() {
     searchText,
     selectedLeads,
     isLeadsLoading,
+    isLeadDrawerOpen,
+    isFilterAndSortOpen,
+    leadToEdit,
+    isModalOpen,
     handleSelection,
     exportAll,
     setSortBy,
@@ -27,47 +29,15 @@ export default function Home() {
     setItemsPerPage,
     onClear,
     setSearchText,
-    createLeadMutation,
-    deleteLeadMutation,
-    updateLeadMutation,
-    bulkDeleteLeadMutation,
+    onEdit,
+    setIsLeadDrawerOpen,
+    setIsFilterAndSortOpen,
+    setLeadToEdit,
+    setIsModalOpen,
+    onConfirmAction,
+    handleDelete,
+    onSave,
   } = useLeads();
-  const [isLeadDrawerOpen, setIsLeadDrawerOpen] = useState(false);
-  const [isFilterAndSortOpen, setIsFilterAndSortOpen] = useState(false);
-  const [leadToEdit, setLeadToEdit] = useState<ILead | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
-
-  const handleDelete = (bulk: boolean = false, id?: number) => {
-    setOnConfirmAction(() => () => {
-      if (bulk) {
-        bulkDeleteLeadMutation();
-      } else if (id !== undefined) {
-        deleteLeadMutation(id);
-      }
-    });
-    setIsModalOpen(true);
-  };
-
-  const onSave = async (lead: ILead) => {
-    try {
-      if (!lead.id) {
-        await createLeadMutation(lead);
-      } else {
-        await updateLeadMutation(lead);
-      }
-
-      setIsLeadDrawerOpen(false);
-      setLeadToEdit(null);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const onEdit = (lead: ILead) => {
-    setLeadToEdit(lead);
-    setIsLeadDrawerOpen(true);
-  };
 
   return (
     <Layout>
@@ -94,7 +64,11 @@ export default function Home() {
         close={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
         title="Please Confirm"
-        subtitle="Are you sure you want to perform this action?"
+        subtitle={
+          selectedLeads.length > 0
+            ? `Are you sure you want to delete all ${selectedLeads.length} leads?`
+            : "Are you sure you want to delete this lead?"
+        }
         onCancel={() => setIsModalOpen(false)}
         onConfirm={() => {
           onConfirmAction();

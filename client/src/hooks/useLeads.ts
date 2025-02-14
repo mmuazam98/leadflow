@@ -16,13 +16,21 @@ import { toast } from "sonner";
 
 export default function useLeads() {
   const [searchText, setSearchText] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [debouncedSearchText, setDebouncedSearchText] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [order, setOrder] = useState("");
-  const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
 
-  const [debouncedSearchText, setDebouncedSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const [leadToEdit, setLeadToEdit] = useState<ILead | null>(null);
+
+  const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
+  const [isLeadDrawerOpen, setIsLeadDrawerOpen] = useState(false);
+  const [isFilterAndSortOpen, setIsFilterAndSortOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -51,7 +59,7 @@ export default function useLeads() {
         return data;
       } catch (error) {
         console.error("Error loading leads:", error);
-        toast.error("Unable to fetch leads.");
+        toast.error("Unable to fetch leads.", { description: "Please try again later." });
       }
     },
     enabled: !!currentPage && !!itemsPerPage,
@@ -69,7 +77,7 @@ export default function useLeads() {
         toast.success("Lead deleted successfully!", { id: toastId, description: "" });
       } catch (error) {
         console.error("Error deleting lead:", error);
-        toast.error("Unable to delete the lead.", { id: toastId, description: "" });
+        toast.error("Unable to delete the lead.", { id: toastId, description: "Please try again later." });
       }
     },
     onSuccess: () => {
@@ -92,7 +100,7 @@ export default function useLeads() {
         toast.success("Bulk deletion successfully!", { id: toastId, description: "" });
       } catch (error) {
         console.error("Error deleting lead:", error);
-        toast.error("Unable to bulk delete.", { id: toastId, description: "" });
+        toast.error("Unable to bulk delete.", { id: toastId, description: "Please try again later." });
       }
     },
     onSuccess: () => {
@@ -111,12 +119,16 @@ export default function useLeads() {
 
       try {
         const { data } = await createNewLead(lead);
-
         toast.success("Lead created successfully!", { id: toastId, description: "" });
+        setIsLeadDrawerOpen(false);
+        setLeadToEdit(null);
         return data.data;
       } catch (error) {
         console.error("Error creating lead:", error);
-        toast.error("Unable to create the lead.", { id: toastId, description: "" });
+        toast.error("Unable to create the lead.", {
+          id: toastId,
+          description: "There seems to be a problem with the request.",
+        });
       }
     },
     onSuccess: () => {
@@ -135,13 +147,17 @@ export default function useLeads() {
       });
 
       try {
-        const { data } = await updateLeadById(lead.id, lead);
-
+        const { data } = await updateLeadById(lead);
         toast.success("Lead updated successfully!", { id: toastId, description: "" });
+        setIsLeadDrawerOpen(false);
+        setLeadToEdit(null);
         return data.data;
       } catch (error) {
         console.error("Error updating lead:", error);
-        toast.error("Unable to updating the lead.", { id: toastId, description: "" });
+        toast.error("Unable to updating the lead.", {
+          id: toastId,
+          description: "There seems to be a problem with the request.",
+        });
       }
     },
     onSuccess: () => {
@@ -172,7 +188,10 @@ export default function useLeads() {
       toast.success("Export complete!", { id: toastId, description: "" });
     } catch (error) {
       console.error("Error exporting leads:", error);
-      toast.error("Unable to export.", { id: toastId, description: "" });
+      toast.error("Unable to export.", {
+        id: toastId,
+        description: "There seems to be a problem in exporting leads data. Please try again later.",
+      });
     }
   };
 
@@ -189,6 +208,34 @@ export default function useLeads() {
     });
   };
 
+  const handleDelete = (bulk: boolean = false, id?: number) => {
+    setOnConfirmAction(() => () => {
+      if (bulk) {
+        bulkDeleteLeadMutation();
+      } else if (id !== undefined) {
+        deleteLeadMutation(id);
+      }
+    });
+    setIsModalOpen(true);
+  };
+
+  const onSave = async (lead: ILead) => {
+    try {
+      if (!lead.id) {
+        await createLeadMutation(lead);
+      } else {
+        await updateLeadMutation(lead);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const onEdit = (lead: ILead) => {
+    setLeadToEdit(lead);
+    setIsLeadDrawerOpen(true);
+  };
+
   return {
     data,
     error,
@@ -199,6 +246,10 @@ export default function useLeads() {
     order,
     searchText,
     selectedLeads,
+    isLeadDrawerOpen,
+    isFilterAndSortOpen,
+    leadToEdit,
+    isModalOpen,
     handleSelection,
     setCurrentPage,
     setSortBy,
@@ -211,5 +262,14 @@ export default function useLeads() {
     bulkDeleteLeadMutation,
     onClear,
     exportAll,
+    onEdit,
+    setIsLeadDrawerOpen,
+    setIsFilterAndSortOpen,
+    setLeadToEdit,
+    setIsModalOpen,
+    onConfirmAction,
+    setOnConfirmAction,
+    handleDelete,
+    onSave,
   };
 }

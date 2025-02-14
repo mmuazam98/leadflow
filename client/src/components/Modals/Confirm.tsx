@@ -1,5 +1,6 @@
 import { IOverlayProps } from "@/types/overlay";
 import { Trash } from "lucide-react";
+import { memo } from "react";
 import { Modal } from "rsuite";
 
 interface IProps extends IOverlayProps {
@@ -9,7 +10,7 @@ interface IProps extends IOverlayProps {
   onCancel: () => void;
 }
 
-export default function ConfirmModal({ isOpen, title, subtitle, onCancel, onConfirm, close }: IProps) {
+const ConfirmModal: React.FC<IProps> = ({ isOpen, title, subtitle, onCancel, onConfirm, close }) => {
   return (
     <Modal size={"min(500px,100%)"} open={isOpen} onClose={close}>
       <Modal.Header>
@@ -31,4 +32,6 @@ export default function ConfirmModal({ isOpen, title, subtitle, onCancel, onConf
       </Modal.Footer>
     </Modal>
   );
-}
+};
+
+export default memo(ConfirmModal);

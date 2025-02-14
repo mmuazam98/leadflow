@@ -13,14 +13,22 @@ import { ILead } from "@/types/lead";
  * @param {string} params.query - The query (name, company, email)
  * @returns {Promise<AxiosResponse<IApiResponse<ILead[]>>>}
  */
-export const fetchLeads = ({ sortBy = "", order = "", limit = 10, offset = 0, query = "" }) => {
-  const params = new URLSearchParams({
-    sortBy,
-    order,
-    limit: limit.toString(),
-    offset: offset.toString(),
-    query,
-  }).toString();
+export const fetchLeads = ({
+  sortBy,
+  order,
+  limit = 10,
+  offset = 0,
+  query,
+}: Partial<{ sortBy: string; order: string; limit: number; offset: number; query: string }>) => {
+  const paramsObj: Record<string, string> = {};
+
+  if (sortBy) paramsObj.sortBy = sortBy;
+  if (order) paramsObj.order = order;
+  if (limit) paramsObj.limit = limit.toString();
+  if (offset) paramsObj.offset = offset.toString();
+  if (query) paramsObj.query = query;
+
+  const params = new URLSearchParams(paramsObj).toString();
 
   return axiosInstance.get<IApiResponse<ILead[]>>(`/leads?${params}`, getHeader());
 };
@@ -49,7 +57,7 @@ export const bulkDeleteLeads = (leadIds: number[]) =>
  * Creates a new lead by sending a POST request to the `/leads` endpoint.
  *
  * @param {ILead} lead - The lead object to be created.
- * @returns {Promise<IApiResponse<ILead>>} - A promise that resolves to the API response containing the created lead.
+ * @returns {Promise<AxiosResponse<IApiResponse<ILead>>>} - A promise that resolves to the API response containing the created lead.
  */
 export const createNewLead = (lead: ILead) => axiosInstance.post<IApiResponse<ILead>>(`/leads`, lead, getHeader());
 
@@ -57,13 +65,13 @@ export const createNewLead = (lead: ILead) => axiosInstance.post<IApiResponse<IL
  * Update a lead by its ID
  *
  * @param {number} leadId - The ID of the lead to update
- * @returns {Promise<IApiResponse<ILead>>} - A promise that resolves to the response of the update operation
+ * @returns {Promise<AxiosResponse<IApiResponse<ILead>>>} - A promise that resolves to the response of the update operation
  */
-export const updateLeadById = (leadId: number, lead: ILead) =>
-  axiosInstance.put<IApiResponse<ILead>>(`/leads/${leadId}`, lead, getHeader());
+export const updateLeadById = (lead: ILead) =>
+  axiosInstance.put<IApiResponse<ILead>>(`/leads/${lead.id!}`, lead, getHeader());
 
 /**
- * Update a lead by its ID
+ * Export all leads as csv
  *
  */
 export const exportAllLeads = () =>

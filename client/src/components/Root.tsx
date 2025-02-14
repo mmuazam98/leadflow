@@ -5,6 +5,7 @@ import "rsuite/Pagination/styles/index.css";
 import "rsuite/DatePicker/styles/index.css";
 import "rsuite/Toggle/styles/index.css";
 import "rsuite/Modal/styles/index.css";
+import "rsuite/Tooltip/styles/index.css";
 
 interface IProps {
   children: React.ReactNode;
