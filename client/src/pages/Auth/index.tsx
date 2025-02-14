@@ -1,8 +1,9 @@
-import { Mail, Lock, User, ArrowRight } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Loader } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 
 const AuthPage: React.FC = () => {
-  const { isLogin, setIsLogin, email, setEmail, password, setPassword, name, setName, handleSubmit } = useAuth();
+  const { isLogin, setIsLogin, loading, email, setEmail, password, setPassword, name, setName, handleSubmit } =
+    useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#6A1BE0] to-[#9747FF] flex items-center justify-center p-4">
@@ -70,9 +71,16 @@ const AuthPage: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full bg-[#6A1BE0] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#5516b3] transition-colors duration-200 flex items-center justify-center gap-2">
-            {isLogin ? "Sign In" : "Create Account"}
-            <ArrowRight className="h-5 w-5" />
+            disabled={loading}
+            className="w-full bg-[#6A1BE0] text-white disabled:!opacity-50 disabled:!cursor-not-allowed py-3 px-4 rounded-lg font-medium hover:bg-[#5516b3] transition-colors duration-200 flex items-center justify-center gap-2">
+            {loading ? (
+              <Loader className="animate-spin" size={18} />
+            ) : (
+              <>
+                {isLogin ? "Sign In" : "Create Account"}
+                <ArrowRight className="h-5 w-5" />
+              </>
+            )}
           </button>
         </form>
 

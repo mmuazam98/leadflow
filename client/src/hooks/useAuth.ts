@@ -11,11 +11,13 @@ export default function useAuth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useAppDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       if (isLogin) {
         const {
@@ -54,10 +56,13 @@ export default function useAuth() {
       toast.error("Oops", {
         description: errMessage,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return {
+    loading,
     isLogin,
     setIsLogin,
     email,

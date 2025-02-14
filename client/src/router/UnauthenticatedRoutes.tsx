@@ -1,7 +1,6 @@
+import { Navigate, Outlet, RouteObject } from "react-router-dom";
 import useUser from "@/hooks/useUser";
 import AuthPage from "@/pages/Auth";
-import { Navigate, Outlet, RouteObject } from "react-router-dom";
-// import LoginPage from "@/pages/Login";
 
 const UnauthenticatedRouteWrapper: React.FC = () => {
   const { isAuthenticated } = useUser();
@@ -10,7 +9,7 @@ const UnauthenticatedRouteWrapper: React.FC = () => {
 
 const UnauthenticatedRoutes: RouteObject[] = [
   {
-    path: "/auth/*",
+    path: "/auth",
     element: <UnauthenticatedRouteWrapper />,
     children: [
       {

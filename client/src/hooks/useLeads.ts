@@ -39,15 +39,20 @@ export default function useLeads() {
   } = useQuery({
     queryKey: ["leads", currentPage, itemsPerPage, sortBy, order, debouncedSearchText],
     queryFn: async () => {
-      // await new Promise((resolve) => setTimeout(resolve, 3000));
-      const { data } = await fetchLeads({
-        limit: itemsPerPage,
-        offset: (currentPage - 1) * itemsPerPage,
-        sortBy,
-        order,
-        query: debouncedSearchText,
-      });
-      return data;
+      try {
+        const { data } = await fetchLeads({
+          limit: itemsPerPage,
+          offset: (currentPage - 1) * itemsPerPage,
+          sortBy,
+          order,
+          query: debouncedSearchText,
+        });
+        if (debouncedSearchText.length) setCurrentPage(1);
+        return data;
+      } catch (error) {
+        console.error("Error loading leads:", error);
+        toast.error("Unable to fetch leads.");
+      }
     },
     enabled: !!currentPage && !!itemsPerPage,
   });
