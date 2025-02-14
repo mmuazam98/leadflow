@@ -22,7 +22,9 @@ Full stack application built using React and FastAPI.
 LeadFlow/
 ├── client/      # Frontend (React)
 ├── server/      # Backend (FastAPI)
+├── start.sh     # Bash script to start frontend and backend
 └── README.md    # Main ReadMe
+
 ```
 
 ## 🛠 Tech Stack
@@ -39,7 +41,7 @@ To set up the project locally, follow these steps:
 
 ### 1️⃣ Clone the Repository
 
-```
+```bash
 git clone git@github.com:mmuazam98/leadflow.git
 cd leadflow
 ```
@@ -51,6 +53,20 @@ Follow the [Backend Setup Instructions](https://github.com/mmuazam98/leadflow/tr
 ### 3️⃣ Setup the Frontend (React)
 
 Follow the [Frontend Setup Instructions](https://github.com/mmuazam98/leadflow/tree/main/client/README.md).
+
+### 4️⃣ Run Frontend & Backend Together
+
+To run both the frontend and backend simultaneously, execute the following script:
+
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+This will:
+
+- Install dependencies and start the React frontend.
+- Install Python dependencies and start the FastAPI backend.
 
 ## 📖 Documentation
 

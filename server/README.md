@@ -62,8 +62,9 @@ pip install -r requirements.txt
 Create a .env file in the project root with the following:
 
 ```
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/leadflow_db
+ASYNC_DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/leadflow_db
 SECRET_KEY=your-secret-key
+ALLOWED_ORIGINS=["http://localhost:5173"]
 ```
 
 ### 5️⃣ Run Database Migrations
