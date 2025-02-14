@@ -10,7 +10,7 @@ This repository contains the backend API, built using FastAPI and SQLAlchemy wit
 
 - Bulk import/export functionality (CSV)
 
-- Authentication & Authorization (optional, if implemented)
+- Authentication & Authorization
 
 - Async database operations for better performance
 

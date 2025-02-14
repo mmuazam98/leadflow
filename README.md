@@ -10,7 +10,7 @@ LeadFlow is a full-stack application built with React and FastAPI.
 
 - **Lead & Company Management**: Create, update, delete, and search leads & companies.
 
-- **User Authentication**: Secure access control (if implemented).
+- **User Authentication**: Secure access control.
 
 - **Bulk Import/Export**: Easily manage leads via CSV files.
 
