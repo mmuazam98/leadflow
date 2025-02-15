@@ -2,13 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import ValidationError
+import logging
 from app.schemas.user import LoginRequest, AuthResponse, RegisterRequest, UserResponse
 from app.schemas.response import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.user_service import UserService
 from app.core.database import db
 from app.utils.auth import verify_password, create_access_token, get_password_hash
-from app.logger.logger import log_message
 
 router = APIRouter()
 
@@ -16,6 +16,7 @@ router = APIRouter()
 class AuthAPI:
     def __init__(self):
         self.service = UserService()
+        self.logger = logging.getLogger(__name__)
 
     async def create_user(self, req: RegisterRequest, session: AsyncSession = Depends(db.get_session)) -> Response[AuthResponse]:
         try:
@@ -39,15 +40,15 @@ class AuthAPI:
             )
 
         except ValidationError as e:
-            log_message("error", f"Validation error: {e}")
+            self.logger.error(f"Validation error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=e.errors())
         except SQLAlchemyError as e:
-            log_message("error", f"Database error: {e}")
+            self.logger.error(f"Database error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
-            log_message("error", f"Unexpected error: {e}")
+            self.logger.error(f"Unexpected error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 
@@ -71,15 +72,15 @@ class AuthAPI:
                 )
             )
         except ValidationError as e:
-            log_message("error", f"Validation error: {e}")
+            self.logger.error(f"Validation error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=e.errors())
         except SQLAlchemyError as e:
-            log_message("error", f"Database error: {e}")
+            self.logger.error(f"Database error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
-            log_message("error", f"Unexpected error: {e}")
+            self.logger.error(f"Unexpected error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 
@@ -98,15 +99,15 @@ class AuthAPI:
             return {"access_token": token, "token_type": "bearer"}
 
         except ValidationError as e:
-            log_message("error", f"Validation error: {e}")
+            self.logger.error(f"Validation error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=e.errors())
         except SQLAlchemyError as e:
-            log_message("error", f"Database error: {e}")
+            self.logger.error(f"Database error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
-            log_message("error", f"Unexpected error: {e}")
+            self.logger.error(f"Unexpected error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 

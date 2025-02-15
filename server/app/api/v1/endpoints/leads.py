@@ -4,14 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from pydantic import ValidationError
 from typing import List
+import logging
 from datetime import datetime
 from app.schemas.response import Response, ResponseWithMeta
 from app.schemas.lead import LeadResponse, LeadCreate, BulkDeleteRequest, LeadUpdate
 from app.services.lead_service import LeadService
 from app.services.company_service import CompanyService
 from app.core.database import db
-from app.utils.validate_user import get_current_user
-from app.logger.logger import log_message
+from app.dependencies.auth import get_current_user
 from app.utils.generate_csv import generate_csv
 
 router = APIRouter()
@@ -21,6 +21,7 @@ class LeadsAPI:
     def __init__(self):
         self.lead_service = LeadService()
         self.company_service = CompanyService()
+        self.logger = logging.getLogger(__name__)
 
     async def create_lead(
         self,
@@ -40,15 +41,15 @@ class LeadsAPI:
             return Response(data=lead)
 
         except ValidationError as e:
-            log_message("error", f"Validation error: {e}")
+            self.logger.error(f"Validation error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=e.errors())
         except SQLAlchemyError as e:
-            log_message("error", f"Database error: {e}")
+            self.logger.error(f"Database error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
-            log_message("error", f"Unexpected error: {e}")
+            self.logger.error(f"Unexpected error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Something went wrong!",
@@ -76,17 +77,17 @@ class LeadsAPI:
             return Response(data=lead)
 
         except ValidationError as e:
-            log_message("error", f"Validation error: {e}")
+            self.logger.error(f"Validation error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=e.errors())
         except HTTPException as e:
             raise e
         except SQLAlchemyError as e:
-            log_message("error", f"Database error: {e}")
+            self.logger.error(f"Database error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
-            log_message("error", f"Unexpected error: {e}")
+            self.logger.error(f"Unexpected error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Something went wrong!",
@@ -116,11 +117,11 @@ class LeadsAPI:
                 }
             )
         except SQLAlchemyError as e:
-            log_message("error", f"Database error: {e}")
+            self.logger.error(f"Database error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
-            log_message("error", f"Unexpected error: {e}")
+            self.logger.error(f"Unexpected error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 
@@ -139,11 +140,11 @@ class LeadsAPI:
         except HTTPException as e:
             raise e
         except SQLAlchemyError as e:
-            log_message("error", f"Database error: {e}")
+            self.logger.error(f"Database error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
-            log_message("error", f"Unexpected error: {e}")
+            self.logger.error(f"Unexpected error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 
@@ -161,15 +162,15 @@ class LeadsAPI:
             return Response(data="Leads deleted successfully!")
 
         except ValidationError as e:
-            log_message("error", f"Validation error: {e}")
+            self.logger.error(f"Validation error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=e.errors())
         except SQLAlchemyError as e:
-            log_message("error", f"Database error: {e}")
+            self.logger.error(f"Database error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
-            log_message("error", f"Unexpected error: {e}")
+            self.logger.error(f"Unexpected error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 
@@ -189,11 +190,11 @@ class LeadsAPI:
         except HTTPException as e:
             raise e
         except SQLAlchemyError as e:
-            log_message("error", f"Database error: {e}")
+            self.logger.error(f"Database error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
         except Exception as e:
-            log_message("error", f"Unexpected error: {e}")
+            self.logger.error(f"Unexpected error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 
@@ -214,7 +215,7 @@ class LeadsAPI:
                 },
             )
         except Exception as e:
-            log_message("error", f"Unexpected error: {e}")
+            self.logger.error(f"Unexpected error: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong!")
 

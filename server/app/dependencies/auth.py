@@ -26,6 +26,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: AsyncSe
         user_id = payload.get("id")
         if not user_id:
             raise HTTPException(status_code=401, detail="Invalid token")
+
         service = UserService()
         user = await service.get_user_by_id(session, user_id)
         if not user:

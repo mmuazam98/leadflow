@@ -11,7 +11,7 @@ class AsyncDatabaseSession:
         self._engine = create_async_engine(
             DATABASE_URL,
             future=True,
-            echo=True,
+            echo=False,
         )
         self._session_factory = sessionmaker(
             bind=self._engine,
