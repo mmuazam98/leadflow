@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prod": "VITE_REACT_APP_ENV=production vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",

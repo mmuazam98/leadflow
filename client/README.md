@@ -57,20 +57,29 @@ yarn  # or npm install
 Create a `.env` file in the project root with the following:
 
 ```bash
-VITE_API_ENDPOINT=http://localhost:8000
+VITE_REACT_APP_ENV=local
 ```
 
 ### 4️⃣ Start the Development Server
 
+#### Run Locally
+
 ```bash
 yarn dev  # or npm run dev
+```
+
+#### Run Using Docker
+
+```bash
+docker build -t leadflow .
+docker run -p 5173:5173 leadflow
 ```
 
 The application will be available at http://localhost:5173.
 
 ## 🔍 API Integration
 
-The frontend communicates with the LeadFlow backend API hosted at VITE_API_ENDPOINT. Ensure the backend is running before making API calls.
+The frontend communicates with the LeadFlow backend API. Ensure the backend is running before making API calls.
 
 ## 🧪 Running Tests
 

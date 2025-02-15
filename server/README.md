@@ -75,8 +75,17 @@ alembic upgrade head
 
 ### 6️⃣ Start the Server
 
+#### Run Locally
+
 ```bash
 uvicorn app.main:app --reload
+```
+
+#### Run Using Docker
+
+```bash
+docker build -t leadflow-server .
+docker run -p 8000:8000 --env-file .env leadflow-server
 ```
 
 ## 🔍 API Documentation
